@@ -3,7 +3,7 @@ import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
 import * as neptune from '@aws-cdk/aws-neptune';
 import * as ecs from '@aws-cdk/aws-ecs';
-import * as ecr from '@aws-cdk/aws-ecr';
+// import * as ecr from '@aws-cdk/aws-ecr';
 import * as es from '@aws-cdk/aws-elasticsearch';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 
@@ -330,10 +330,10 @@ export class AmundsenStack extends cdk.Stack {
     })
 
     // Get the ecr repository
-    const metadataRepo = ecr.Repository.fromRepositoryArn(this, 'MetadataRepo', 'arn:aws:ecr:ap-southeast-2:276422859692:repository/amundsen-metadata')
+    // const metadataRepo = ecr.Repository.fromRepositoryArn(this, 'MetadataRepo', 'arn:aws:ecr:ap-southeast-2:276422859692:repository/amundsen-metadata')
 
     const metadataContainer = amundsenFrontend.addContainer('AmundsenMetadataContainer', {
-      image: ecs.ContainerImage.fromEcrRepository(metadataRepo, 'latest'),
+      image: ecs.ContainerImage.fromRegistry('public.ecr.aws/v5i8t0j1/amundsen-metadata-image:latest'),
       logging: ecs.LogDrivers.awsLogs({ streamPrefix: 'amundsen-metadata' }),
       environment: {
         // LOG_LEVEL: 'DEBUG',
@@ -421,6 +421,42 @@ export class AmundsenStack extends cdk.Stack {
   }
 }
 
+export class VPCStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    new ec2.Vpc(this, 'CustomVPC'), {
+      cidr: '10.0.0.0/16',
+      enableDnsHostnames: true,
+      enableDnsSupport: true,
+      maxAzs: 9,
+      subnetConfiguration: [
+        {
+          cidrMask: 24,
+          name: 'isolatedSubnet',
+          subnetType: ec2.SubnetType.ISOLATED,
+        },
+        {
+          cidrMask: 24,
+          name: 'privateSubnet',
+          subnetType: ec2.SubnetType.PRIVATE,
+        },
+        {
+          cidrMask: 24,
+          name: 'publicSubnet',
+          subnetType: ec2.SubnetType.PUBLIC,
+        }
+      ],
+      natGateways: 3,
+      natGatewaySubnets: {
+        subnetType: ec2.SubnetType.PRIVATE
+      }
+    }
+    
+
+  }
+}
+
 
 // for development, use account/region from cdk cli
 const devEnv = {
@@ -434,5 +470,7 @@ const app = new cdk.App();
 new SLRStack(app, 'amudsen-dev-es-slr', { env: devEnv });
 
 new AmundsenStack(app, 'amudsen-dev-stack', { env: devEnv });
+
+new VPCStack(app, 'amudsen-dev-vpc', { env: devEnv });
 
 app.synth();
