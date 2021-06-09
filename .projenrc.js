@@ -1,7 +1,8 @@
 const { AwsCdkTypeScriptApp } = require('projen');
 
 const project = new AwsCdkTypeScriptApp({
-  cdkVersion: '1.90.0',
+  defaultReleaseBranch: 'main',
+  cdkVersion: '1.107.0',
   name: 'amundsen-cdk-template',
 
   /* AwsCdkTypeScriptAppOptions */
@@ -15,16 +16,17 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/aws-ecr',
     '@aws-cdk/aws-logs',
     '@aws-cdk/aws-ecs-patterns',
-    '@aws-cdk/aws-elasticloadbalancingv2'
-  ],                                               /* Which AWS CDK modules (those that start with "@aws-cdk/") this app uses. */
+    '@aws-cdk/aws-elasticloadbalancingv2',
+    '@aws-cdk/aws-s3',
+  ] /* Which AWS CDK modules (those that start with "@aws-cdk/") this app uses. */,
   // cdkVersionPinning: false,                                                 /* Use pinned version instead of caret version for CDK. */
   // context: undefined,                                                       /* Additional context to include in `cdk.json`. */
   // requireApproval: CdkApprovalLevel.BROADENING,                             /* To protect you against unintended changes that affect your security posture, the AWS CDK Toolkit prompts you to approve security-related changes before deploying them. */
 
   /* NodePackageOptions */
   // allowLibraryDependencies: true,                                           /* Allow the project to include `peerDependencies` and `bundledDependencies`. */
-  authorEmail: 'peter@cloudshuttle.com.au',                                                   /* Author's e-mail. */
-  authorName: 'Peter Hanssens',                                                    /* Author's name. */
+  authorEmail: 'peter@cloudshuttle.com.au' /* Author's e-mail. */,
+  authorName: 'Peter Hanssens' /* Author's name. */,
   // authorOrganization: undefined,                                            /* Author's Organization. */
   // authorUrl: undefined,                                                     /* Author's URL / Website. */
   // autoDetectBin: true,                                                      /* Automatically add all executables under the `bin` directory to your `package.json` file under the `bin` section. */

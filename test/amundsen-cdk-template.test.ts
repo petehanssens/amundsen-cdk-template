@@ -1,13 +1,11 @@
-import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
+import { expect as expectCDK, haveResource } from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
-import * as AmundsenCdkTemplate from '../lib/amundsen-cdk-template-stack';
+import * as AmundsenCdkTemplate from '../src/main';
 
 test('Empty Stack', () => {
-    const app = new cdk.App();
-    // WHEN
-    const stack = new AmundsenCdkTemplate.AmundsenCdkTemplateStack(app, 'MyTestStack');
-    // THEN
-    expectCDK(stack).to(matchTemplate({
-      "Resources": {}
-    }, MatchStyle.EXACT))
+  const app = new cdk.App();
+  // WHEN
+  const stack = new AmundsenCdkTemplate.AmundsenStack(app, 'MyTestStack');
+  // THEN
+  expectCDK(stack).to(haveResource('AWS::ECS::Cluster'));
 });
